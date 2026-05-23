@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture Generator - HIBA ALAOUI SLIMANI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                grid-template-columns: 400px 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-height: 900px;
+            overflow-y: auto;
+        }
+
+        .panel h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: #333;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .preview {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        #invoicePreview {
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border: 1px solid #ddd;
+            font-family: 'Times New Roman', Times, serif;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        .date-location {
+            text-align: right;
+            font-size: 11px;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .company-header {
+            text-align: left;
+            margin-bottom: 40px;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .company-info {
+            font-size: 10px;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        .invoice-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 60px 0 60px 0;
+            letter-spacing: 2px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 80px;
+            font-size: 11px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .info-label {
+            font-weight: bold;
+            min-width: 110px;
+            text-align: left;
+        }
+
+        .info-value {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .total-section {
+            text-align: right;
+            margin-top: 60px;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .total-label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .total-text {
+            font-size: 10px;
+            color: #000;
+            text-align: left;
+            margin-top: 30px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 767px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #invoicePreview {
+                padding: 15px;
+                font-size: 11px;
+            }
+
+            .company-name {
+                font-size: 16px;
+            }
+
+            .invoice-title {
+                font-size: 20px;
+            }
+
+            .panel {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Facture Generator</h1>
+            <p>HIBA ALAOUI SLIMANI</p>
+        </div>
+
+        <div class="content">
+            <div class="panel">
+                <h2>Edit Details</h2>
+
+                <div class="section-title">Company Info</div>
+                <div class="form-group">
+                    <label for="companyName">Company Name</label>
+                    <input type="text" id="companyName" value="HIBA ALAOUI SLIMANI">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" value="20 Boulevard Zerktouni 22 Benjdia Anfa Casablanca">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Tel</label>
+                    <input type="text" id="phone" value="+212 6 39 93 44 69">
+                </div>
+                <div class="form-group">
+                    <label for="cin">CIN</label>
+                    <input type="text" id="cin" value="BE920507">
+                </div>
+                <div class="form-group">
+                    <label for="patente">Patente N</label>
+                    <input type="text" id="patente" value="34208118">
+                </div>
+                <div class="form-group">
+                    <label for="companyICE">Company ICE</label>
+                    <input type="text" id="companyICE" value="003320692000065">
+                </div>
+
+                <div class="section-title">Invoice Info</div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" value="CASABLANCA">
+                </div>
+                <div class="form-group">
+                    <label for="day">Day</label>
+                    <input type="text" id="day" value="25">
+                </div>
+                <div class="form-group">
+                    <label for="month">Month</label>
+                    <input type="text" id="month" value="Mai">
+                </div>
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="text" id="year" value="2026">
+                </div>
+                <div class="form-group">
+                    <label for="invoiceNumber">Invoice Number</label>
+                    <input type="text" id="invoiceNumber" value="13/26">
+                </div>
+
+                <div class="section-title">Client Details</div>
+                <div class="form-group">
+                    <label for="client">Client</label>
+                    <input type="text" id="client" value="JAWJAB PRODUCTION">
+                </div>
+                <div class="form-group">
+                    <label for="projet">Projet</label>
+                    <input type="text" id="projet" value="MESIDOR">
+                </div>
+                <div class="form-group">
+                    <label for="ice">Client ICE</label>
+                    <input type="text" id="ice" value="001959740000035">
+                </div>
+                <div class="form-group">
+                    <label for="designation">Désignation</label>
+                    <input type="text" id="designation" value="Art Department">
+                </div>
+
+                <div class="section-title">Total</div>
+                <div class="form-group">
+                    <label for="totalAmount">Amount (MAD)</label>
+                    <input type="text" id="totalAmount" value="6.000,00">
+                </div>
+                <div class="form-group">
+                    <label for="totalText">Total Text</label>
+                    <input type="text" id="totalText" value="Arrêter la présente facture à la somme de six mille DIRHAMS.">
+                </div>
+
+                <button onclick="downloadPDF()">⬇️ Download PDF</button>
+            </div>
+
+            <div class="preview">
+                <h2>Preview</h2>
+                <div id="invoicePreview">
+                    <div class="date-location">
+                        <span id="previewLocation">CASABLANCA</span> le <span id="previewDay">25</span> <span id="previewMonth">Mai</span> <span id="previewYear">2026</span>
+                    </div>
+
+                    <div class="company-header">
+                        <div class="company-name" id="previewCompanyName">HIBA ALAOUI SLIMANI</div>
+                        <div class="company-info">
+                            <div>ADRESSE : <span id="previewAddress">20 Boulevard Zerktouni 22 Benjdia Anfa Casablanca</span></div>
+                            <div>TEL : <span id="previewPhone">+212 6 39 93 44 69</span></div>
+                            <div>CIN : <span id="previewCIN">BE920507</span></div>
+                            <div>PATENTE N : <span id="previewPatente">34208118</span></div>
+                            <div>ICE : <span id="previewCompanyICE">003320692000065</span></div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-title">
+                        FACTURE <span id="previewInvoiceNumber">13/26</span>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Client :</div>
+                            <div class="info-value" id="previewClient">JAWJAB PRODUCTION</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Projet :</div>
+                            <div class="info-value" id="previewProjet">MESIDOR</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">ICE :</div>
+                            <div class="info-value" id="previewICE">001959740000035</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Désignation :</div>
+                            <div class="info-value" id="previewDesignation">Art Department</div>
+                        </div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">TOTAL : <span id="previewTotalAmount">6.000,00 MAD</span></div>
+                        <div class="total-text" id="previewTotalText">Arrêter la présente facture à la somme de six mille DIRHAMS.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Company Info
+        document.getElementById('companyName').addEventListener('input', (e) => {
+            document.getElementById('previewCompanyName').textContent = e.target.value;
+        });
+        document.getElementById('address').addEventListener('input', (e) => {
+            document.getElementById('previewAddress').textContent = e.target.value;
+        });
+        document.getElementById('phone').addEventListener('input', (e) => {
+            document.getElementById('previewPhone').textContent = e.target.value;
+        });
+        document.getElementById('cin').addEventListener('input', (e) => {
+            document.getElementById('previewCIN').textContent = e.target.value;
+        });
+        document.getElementById('patente').addEventListener('input', (e) => {
+            document.getElementById('previewPatente').textContent = e.target.value;
+        });
+        document.getElementById('companyICE').addEventListener('input', (e) => {
+            document.getElementById('previewCompanyICE').textContent = e.target.value;
+        });
+
+        // Invoice Info
+        document.getElementById('location').addEventListener('input', (e) => {
+            document.getElementById('previewLocation').textContent = e.target.value;
+        });
+        document.getElementById('day').addEventListener('input', (e) => {
+            document.getElementById('previewDay').textContent = e.target.value;
+        });
+        document.getElementById('month').addEventListener('input', (e) => {
+            document.getElementById('previewMonth').textContent = e.target.value;
+        });
+        document.getElementById('year').addEventListener('input', (e) => {
+            document.getElementById('previewYear').textContent = e.target.value;
+        });
+        document.getElementById('invoiceNumber').addEventListener('input', (e) => {
+            document.getElementById('previewInvoiceNumber').textContent = e.target.value;
+        });
+
+        // Client Details
+        document.getElementById('client').addEventListener('input', (e) => {
+            document.getElementById('previewClient').textContent = e.target.value;
+        });
+        document.getElementById('projet').addEventListener('input', (e) => {
+            document.getElementById('previewProjet').textContent = e.target.value;
+        });
+        document.getElementById('ice').addEventListener('input', (e) => {
+            document.getElementById('previewICE').textContent = e.target.value;
+        });
+        document.getElementById('designation').addEventListener('input', (e) => {
+            document.getElementById('previewDesignation').textContent = e.target.value;
+        });
+
+        // Total
+        document.getElementById('totalAmount').addEventListener('input', (e) => {
+            document.getElementById('previewTotalAmount').textContent = e.target.value + ' MAD';
+        });
+        document.getElementById('totalText').addEventListener('input', (e) => {
+            document.getElementById('previewTotalText').textContent = e.target.value;
+        });
+
+        function downloadPDF() {
+            const element = document.getElementById('invoicePreview');
+            const fileName = `facture_${document.getElementById('invoiceNumber').value.replace('/', '_')}.pdf`;
+            const opt = {
+                margin: 10,
+                filename: fileName,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
