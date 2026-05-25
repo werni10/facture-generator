@@ -36,8 +36,100 @@
             z-index: -1;
         }
 
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffe5f0 0%, #fff0f7 50%, #ffd4e5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.25);
+            border: 2px solid rgba(255, 192, 203, 0.3);
+            text-align: center;
+            max-width: 350px;
+            animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .login-box h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff9fd5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .login-box p {
+            color: #d946a6;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #ffc0cb;
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: 'Quicksand', sans-serif;
+            background: rgba(255, 255, 255, 0.7);
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #ff69b4;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.25);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff85c1 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.4);
+        }
+
+        .error-msg {
+            color: #e91e63;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -47,6 +139,13 @@
             text-align: center;
             margin-bottom: 30px;
             animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            flex: 1;
         }
 
         .header h1 {
@@ -69,6 +168,24 @@
             text-transform: uppercase;
         }
 
+        .logout-btn {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff85c1 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+        }
+
         .content {
             display: grid;
             grid-template-columns: 1fr;
@@ -78,6 +195,10 @@
         @media (min-width: 768px) {
             .content {
                 grid-template-columns: 380px 1fr;
+            }
+
+            .header {
+                flex-direction: row;
             }
         }
 
@@ -107,10 +228,6 @@
             border-radius: 10px;
         }
 
-        .panel::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 105, 180, 0.6);
-        }
-
         .panel h2 {
             font-family: 'Poppins', sans-serif;
             color: #d946a6;
@@ -123,8 +240,15 @@
         }
 
         .panel h2::before {
-            content: '✨';
             font-size: 24px;
+        }
+
+        .panel.editor h2::before {
+            content: '✨';
+        }
+
+        .panel.history h2::before {
+            content: '📚';
         }
 
         .section-title {
@@ -204,6 +328,46 @@
             transform: translateY(-1px);
         }
 
+        .history-item {
+            background: rgba(255, 192, 203, 0.1);
+            border-left: 3px solid #ff69b4;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 192, 203, 0.2);
+            transform: translateX(4px);
+        }
+
+        .history-item-title {
+            font-weight: 600;
+            color: #d946a6;
+            font-size: 12px;
+        }
+
+        .history-item-date {
+            color: #ffb6c1;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .history-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 11px;
+            margin-top: 0;
+        }
+
         .preview {
             background: rgba(255, 255, 255, 0.92);
             border-radius: 28px;
@@ -242,13 +406,6 @@
             box-shadow: 0 10px 30px rgba(255, 192, 203, 0.2);
         }
 
-        .date-location {
-            text-align: right;
-            font-size: 11px;
-            margin-bottom: 40px;
-            font-weight: bold;
-        }
-
         .company-header {
             text-align: left;
             margin-bottom: 40px;
@@ -266,6 +423,13 @@
             font-size: 10px;
             line-height: 1.5;
             color: #000;
+        }
+
+        .date-location {
+            text-align: right;
+            font-size: 11px;
+            margin-bottom: 40px;
+            font-weight: bold;
         }
 
         .invoice-title {
@@ -372,18 +536,42 @@
             .header h1 {
                 font-size: 28px;
             }
+
+            .header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1>🌸 Factures</h1>
+            <p>HIBA ALAOUI SLIMANI</p>
+            <input type="password" class="login-input" id="passwordInput" placeholder="Enter Password" />
+            <div class="error-msg" id="errorMsg">Incorrect password</div>
+            <button class="login-btn" onclick="login()">Access App</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
     <div class="container">
         <div class="header">
-            <h1>📄 Facture Generator</h1>
-            <p>HIBA ALAOUI SLIMANI</p>
+            <div class="header-title">
+                <h1>🌸 Facture Generator</h1>
+                <p>HIBA ALAOUI SLIMANI</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
         <div class="content">
-            <div class="panel">
+            <div class="panel editor">
                 <h2>Edit Details</h2>
 
                 <div class="section-title">Company Info</div>
@@ -463,6 +651,9 @@
                 </div>
 
                 <button onclick="downloadPDF()">⬇️ Download PDF</button>
+
+                <div class="section-title" style="margin-top: 25px;">History</div>
+                <div id="historyList"></div>
             </div>
 
             <div class="preview">
@@ -516,7 +707,44 @@
     </div>
 
     <script>
-        // Company Info
+        const PASSWORD = "WASH";
+
+        // Login logic
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === PASSWORD) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                localStorage.setItem('authenticated', 'true');
+                loadHistory();
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authenticated');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        // Check authentication on load
+        window.addEventListener('load', () => {
+            if (!localStorage.getItem('authenticated')) {
+                document.getElementById('loginScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('loginScreen').classList.add('hidden');
+                loadHistory();
+            }
+
+            // Allow Enter key to login
+            document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') login();
+            });
+        });
+
+        // Real-time preview update
         document.getElementById('companyName').addEventListener('input', (e) => {
             document.getElementById('previewCompanyName').textContent = e.target.value;
         });
@@ -536,7 +764,6 @@
             document.getElementById('previewCompanyICE').textContent = e.target.value;
         });
 
-        // Invoice Info
         document.getElementById('location').addEventListener('input', (e) => {
             document.getElementById('previewLocation').textContent = e.target.value;
         });
@@ -553,7 +780,6 @@
             document.getElementById('previewInvoiceNumber').textContent = e.target.value;
         });
 
-        // Client Details
         document.getElementById('client').addEventListener('input', (e) => {
             document.getElementById('previewClient').textContent = e.target.value;
         });
@@ -567,7 +793,6 @@
             document.getElementById('previewDesignation').textContent = e.target.value;
         });
 
-        // Total
         document.getElementById('totalAmount').addEventListener('input', (e) => {
             document.getElementById('previewTotalAmount').textContent = e.target.value + ' MAD';
         });
@@ -575,7 +800,108 @@
             document.getElementById('previewTotalText').textContent = e.target.value;
         });
 
+        // Invoice history
+        function saveInvoice() {
+            const invoiceData = {
+                companyName: document.getElementById('companyName').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                cin: document.getElementById('cin').value,
+                patente: document.getElementById('patente').value,
+                companyICE: document.getElementById('companyICE').value,
+                location: document.getElementById('location').value,
+                day: document.getElementById('day').value,
+                month: document.getElementById('month').value,
+                year: document.getElementById('year').value,
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                client: document.getElementById('client').value,
+                projet: document.getElementById('projet').value,
+                ice: document.getElementById('ice').value,
+                designation: document.getElementById('designation').value,
+                totalAmount: document.getElementById('totalAmount').value,
+                totalText: document.getElementById('totalText').value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            let history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            history.unshift(invoiceData);
+            localStorage.setItem('invoiceHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="color: #ffb6c1; font-size: 12px;">No invoices yet</p>';
+                return;
+            }
+
+            historyList.innerHTML = history.map((inv, index) => `
+                <div class="history-item" onclick="loadInvoice(${index})">
+                    <div class="history-item-title">Facture ${inv.invoiceNumber}</div>
+                    <div class="history-item-date">${inv.timestamp}</div>
+                    <div class="history-item-date">${inv.client}</div>
+                    <div class="history-actions">
+                        <button onclick="loadInvoice(${index}); event.stopPropagation();">Load</button>
+                        <button onclick="deleteInvoice(${index}); event.stopPropagation();">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadInvoice(index) {
+            const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            const inv = history[index];
+
+            document.getElementById('companyName').value = inv.companyName;
+            document.getElementById('address').value = inv.address;
+            document.getElementById('phone').value = inv.phone;
+            document.getElementById('cin').value = inv.cin;
+            document.getElementById('patente').value = inv.patente;
+            document.getElementById('companyICE').value = inv.companyICE;
+            document.getElementById('location').value = inv.location;
+            document.getElementById('day').value = inv.day;
+            document.getElementById('month').value = inv.month;
+            document.getElementById('year').value = inv.year;
+            document.getElementById('invoiceNumber').value = inv.invoiceNumber;
+            document.getElementById('client').value = inv.client;
+            document.getElementById('projet').value = inv.projet;
+            document.getElementById('ice').value = inv.ice;
+            document.getElementById('designation').value = inv.designation;
+            document.getElementById('totalAmount').value = inv.totalAmount;
+            document.getElementById('totalText').value = inv.totalText;
+
+            // Update preview
+            document.getElementById('previewCompanyName').textContent = inv.companyName;
+            document.getElementById('previewAddress').textContent = inv.address;
+            document.getElementById('previewPhone').textContent = inv.phone;
+            document.getElementById('previewCIN').textContent = inv.cin;
+            document.getElementById('previewPatente').textContent = inv.patente;
+            document.getElementById('previewCompanyICE').textContent = inv.companyICE;
+            document.getElementById('previewLocation').textContent = inv.location;
+            document.getElementById('previewDay').textContent = inv.day;
+            document.getElementById('previewMonth').textContent = inv.month;
+            document.getElementById('previewYear').textContent = inv.year;
+            document.getElementById('previewInvoiceNumber').textContent = inv.invoiceNumber;
+            document.getElementById('previewClient').textContent = inv.client;
+            document.getElementById('previewProjet').textContent = inv.projet;
+            document.getElementById('previewICE').textContent = inv.ice;
+            document.getElementById('previewDesignation').textContent = inv.designation;
+            document.getElementById('previewTotalAmount').textContent = inv.totalAmount + ' MAD';
+            document.getElementById('previewTotalText').textContent = inv.totalText;
+        }
+
+        function deleteInvoice(index) {
+            let history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            history.splice(index, 1);
+            localStorage.setItem('invoiceHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
         function downloadPDF() {
+            saveInvoice();
             const element = document.getElementById('invoicePreview');
             const fileName = `facture_${document.getElementById('invoiceNumber').value.replace('/', '_')}.pdf`;
             const opt = {
