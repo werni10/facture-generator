@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture Generator - HIBA ALAOUI SLIMANI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2docx/1.4.3/html2docx.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
 
@@ -865,6 +865,10 @@
 
         function loadInvoice(index) {
             const history = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            if (!history[index]) {
+                alert('Invoice not found');
+                return;
+            }
             const inv = history[index];
 
             document.getElementById('companyName').value = inv.companyName;
@@ -885,24 +889,24 @@
             document.getElementById('totalAmount').value = inv.totalAmount;
             document.getElementById('totalText').value = inv.totalText;
 
-            // Update preview
-            document.getElementById('previewCompanyName').textContent = inv.companyName;
-            document.getElementById('previewAddress').textContent = inv.address;
-            document.getElementById('previewPhone').textContent = inv.phone;
-            document.getElementById('previewCIN').textContent = inv.cin;
-            document.getElementById('previewPatente').textContent = inv.patente;
-            document.getElementById('previewCompanyICE').textContent = inv.companyICE;
-            document.getElementById('previewLocation').textContent = inv.location;
-            document.getElementById('previewDay').textContent = inv.day;
-            document.getElementById('previewMonth').textContent = inv.month;
-            document.getElementById('previewYear').textContent = inv.year;
-            document.getElementById('previewInvoiceNumber').textContent = inv.invoiceNumber;
-            document.getElementById('previewClient').textContent = inv.client;
-            document.getElementById('previewProjet').textContent = inv.projet;
-            document.getElementById('previewICE').textContent = inv.ice;
-            document.getElementById('previewDesignation').textContent = inv.designation;
-            document.getElementById('previewTotalAmount').textContent = inv.totalAmount + ' MAD';
-            document.getElementById('previewTotalText').textContent = inv.totalText;
+            // Trigger input events to update preview
+            document.getElementById('companyName').dispatchEvent(new Event('input'));
+            document.getElementById('address').dispatchEvent(new Event('input'));
+            document.getElementById('phone').dispatchEvent(new Event('input'));
+            document.getElementById('cin').dispatchEvent(new Event('input'));
+            document.getElementById('patente').dispatchEvent(new Event('input'));
+            document.getElementById('companyICE').dispatchEvent(new Event('input'));
+            document.getElementById('location').dispatchEvent(new Event('input'));
+            document.getElementById('day').dispatchEvent(new Event('input'));
+            document.getElementById('month').dispatchEvent(new Event('input'));
+            document.getElementById('year').dispatchEvent(new Event('input'));
+            document.getElementById('invoiceNumber').dispatchEvent(new Event('input'));
+            document.getElementById('client').dispatchEvent(new Event('input'));
+            document.getElementById('projet').dispatchEvent(new Event('input'));
+            document.getElementById('ice').dispatchEvent(new Event('input'));
+            document.getElementById('designation').dispatchEvent(new Event('input'));
+            document.getElementById('totalAmount').dispatchEvent(new Event('input'));
+            document.getElementById('totalText').dispatchEvent(new Event('input'));
         }
 
         function deleteInvoice(index) {
@@ -929,118 +933,27 @@
 
         function downloadDOCX() {
             saveInvoice();
-            const { Document, Packer, Paragraph, TextRun, AlignmentType, convertInchesToTwip } = docx;
-
-            const companyName = document.getElementById('companyName').value;
-            const address = document.getElementById('address').value;
-            const phone = document.getElementById('phone').value;
-            const cin = document.getElementById('cin').value;
-            const patente = document.getElementById('patente').value;
-            const companyICE = document.getElementById('companyICE').value;
-            const location = document.getElementById('location').value;
-            const day = document.getElementById('day').value;
-            const month = document.getElementById('month').value;
-            const year = document.getElementById('year').value;
             const invoiceNumber = document.getElementById('invoiceNumber').value;
-            const client = document.getElementById('client').value;
-            const projet = document.getElementById('projet').value;
-            const ice = document.getElementById('ice').value;
-            const designation = document.getElementById('designation').value;
-            const totalAmount = document.getElementById('totalAmount').value;
-            const totalText = document.getElementById('totalText').value;
+            const htmlContent = document.getElementById('invoicePreview').innerHTML;
 
-            const sections = [{
-                children: [
-                    new Paragraph({
-                        text: `${location} le ${day} ${month} ${year}`,
-                        alignment: AlignmentType.RIGHT,
-                        spacing: { after: 400 }
-                    }),
-                    new Paragraph({
-                        text: companyName,
-                        bold: true,
-                        size: 22,
-                        spacing: { after: 100 }
-                    }),
-                    new Paragraph({
-                        text: `ADRESSE : ${address}`,
-                        size: 20,
-                        spacing: { after: 80 }
-                    }),
-                    new Paragraph({
-                        text: `TEL : ${phone}`,
-                        size: 20,
-                        spacing: { after: 80 }
-                    }),
-                    new Paragraph({
-                        text: `CIN : ${cin}`,
-                        size: 20,
-                        spacing: { after: 80 }
-                    }),
-                    new Paragraph({
-                        text: `PATENTE N : ${patente}`,
-                        size: 20,
-                        spacing: { after: 80 }
-                    }),
-                    new Paragraph({
-                        text: `ICE : ${companyICE}`,
-                        size: 20,
-                        spacing: { after: 600 }
-                    }),
-                    new Paragraph({
-                        text: `Facture ${invoiceNumber}`,
-                        alignment: AlignmentType.CENTER,
-                        bold: true,
-                        size: 56,
-                        spacing: { before: 400, after: 400 }
-                    }),
-                    new Paragraph({
-                        text: `Client           :               ${client}`,
-                        size: 22,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: `Projet           :               ${projet}`,
-                        size: 22,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: `ICE                  :                 ${ice}`,
-                        size: 22,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: `Désignation     :                 ${designation}`,
-                        size: 22,
-                        spacing: { after: 800 }
-                    }),
-                    new Paragraph({
-                        text: `TOTAL : ${totalAmount} MAD`,
-                        alignment: AlignmentType.RIGHT,
-                        bold: true,
-                        size: 22,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: totalText,
-                        size: 20,
-                        spacing: { after: 200 }
-                    })
-                ]
-            }];
-
-            const doc = new Document({ sections });
-
-            Packer.toBlob(doc).then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            });
+            try {
+                html2docx.asBlob(htmlContent).then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }).catch(e => {
+                    console.error('DOCX error:', e);
+                    alert('Error generating DOCX. Try downloading PDF instead.');
+                });
+            } catch(e) {
+                console.error('DOCX error:', e);
+                alert('Error generating DOCX. Try downloading PDF instead.');
+            }
         }
     </script>
 </body>
