@@ -933,81 +933,66 @@
         function downloadDOCX() {
             saveInvoice();
             const invoiceNumber = document.getElementById('invoiceNumber').value;
-            const location = document.getElementById('location').value;
-            const day = document.getElementById('day').value;
-            const month = document.getElementById('month').value;
-            const year = document.getElementById('year').value;
-            const companyName = document.getElementById('companyName').value;
-            const address = document.getElementById('address').value;
-            const phone = document.getElementById('phone').value;
-            const cin = document.getElementById('cin').value;
-            const patente = document.getElementById('patente').value;
-            const companyICE = document.getElementById('companyICE').value;
             const client = document.getElementById('client').value;
             const projet = document.getElementById('projet').value;
             const ice = document.getElementById('ice').value;
             const designation = document.getElementById('designation').value;
             const totalAmount = document.getElementById('totalAmount').value;
-            const totalText = document.getElementById('totalText').value;
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
 
-            const xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <w:body>
-    <w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:t>${location} le ${day} ${month} ${year}</w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:b/><w:sz w:val="32"/></w:rPr><w:t>${companyName}</w:t></w:r></w:p>
-    <w:p><w:r><w:t>ADRESSE : ${address}</w:t></w:r></w:p>
-    <w:p><w:r><w:t>TEL : ${phone}</w:t></w:r></w:p>
-    <w:p><w:r><w:t>CIN : ${cin}</w:t></w:r></w:p>
-    <w:p><w:r><w:t>PATENTE N : ${patente}</w:t></w:r></w:p>
-    <w:p><w:r><w:t>ICE : ${companyICE}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="56"/></w:rPr><w:t>Facture ${invoiceNumber}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:b/></w:rPr><w:t>Client :</w:t></w:r></w:p>
-    <w:p><w:r><w:t>${client}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:b/></w:rPr><w:t>Projet :</w:t></w:r></w:p>
-    <w:p><w:r><w:t>${projet}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:b/></w:rPr><w:t>ICE :</w:t></w:r></w:p>
-    <w:p><w:r><w:t>${ice}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:rPr><w:b/></w:rPr><w:t>Désignation :</w:t></w:r></w:p>
-    <w:p><w:r><w:t>${designation}</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>TOTAL : ${totalAmount} MAD</w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:t> </w:t></w:r></w:p>
-    <w:p><w:r><w:t>${totalText}</w:t></w:r></w:p>
-  </w:body>
-</w:document>`;
+            // Load template and modify
+            fetch('template.docx')
+                .then(r => r.arrayBuffer())
+                .then(buf => {
+                    const zip = new JSZip();
+                    return zip.loadAsync(buf).then(() => {
+                        return zip.file('word/document.xml').async('string');
+                    }).then(xml => {
+                        // Replace values in document.xml
+                        let modified = xml;
 
-            const zip = new JSZip();
+                        // Replace client (RAF Production → new client)
+                        modified = modified.replace(/RAF Production/g, client);
 
-            // Add required files
-            zip.file('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+                        // Replace projet (Clip Family → new projet)
+                        modified = modified.replace(/Clip Family/g, projet);
 
-            zip.folder('_rels').file('.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+                        // Replace ICE (003707562000020 → new ICE)
+                        modified = modified.replace(/003707562000020/g, ice);
 
-            zip.folder('word').file('document.xml', xml);
-            zip.folder('word/_rels').file('document.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>');
+                        // Replace designation (Art Department → new designation)
+                        modified = modified.replace(/Art Department/g, designation);
 
-            zip.generateAsync({ type: 'blob' }).then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            }).catch(e => {
-                console.error('DOCX error:', e);
-                alert('Error generating DOCX: ' + e.message);
-            });
+                        // Replace total amount (2500,00 → new amount)
+                        modified = modified.replace(/2500,00/g, totalAmount);
+
+                        // Replace invoice number (handle split across multiple runs: "Facture 1" + "6" + "/26")
+                        // This is tricky - the number might be split
+                        const [invoiceNum, invoiceTotal] = invoiceNumber.split('/');
+                        modified = modified.replace(/Facture 1<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>6<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>\/26/g, `Facture ${invoiceNumber}`);
+
+                        // Update zip with modified XML
+                        zip.file('word/document.xml', modified);
+
+                        // Generate and download
+                        return zip.generateAsync({ type: 'blob' });
+                    }).then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    });
+                })
+                .catch(e => {
+                    console.error('DOCX template error:', e);
+                    alert('Error loading template. Make sure template.docx exists.');
+                });
         }
     </script>
 </body>
