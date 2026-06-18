@@ -950,7 +950,7 @@
                     return zip.loadAsync(buf).then(() => {
                         return zip.file('word/document.xml').async('string');
                     }).then(xml => {
-                        // Replace values in document.xml
+                        // Replace values in document.xml - keep exact spacing
                         let modified = xml;
 
                         // Replace client (RAF Production → new client)
@@ -968,10 +968,14 @@
                         // Replace total amount (2500,00 → new amount)
                         modified = modified.replace(/2500,00/g, totalAmount);
 
-                        // Replace invoice number (handle split across multiple runs: "Facture 1" + "6" + "/26")
-                        // This is tricky - the number might be split
-                        const [invoiceNum, invoiceTotal] = invoiceNumber.split('/');
-                        modified = modified.replace(/Facture 1<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>6<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>\/26/g, `Facture ${invoiceNumber}`);
+                        // Replace invoice number with exact format: Facture X/XX
+                        // Handle the complex split: "Facture 1" + "6" + "/26"
+                        modified = modified.replace(/<w:t>Facture 1<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>6<\/w:t><\/w:r><w:r[^>]*><w:rPr[^>]*><\/w:rPr><w:t>\/26/g, `<w:t>Facture ${invoiceNumber}</w:t></w:r><w:r><w:rPr></w:rPr><w:t></w:t></w:r><w:r><w:rPr></w:rPr><w:t`);
+
+                        // Also handle simpler case if above doesn't match
+                        if (!modified.includes(`Facture ${invoiceNumber}`)) {
+                            modified = modified.replace(/Facture 16\/26/g, `Facture ${invoiceNumber}`);
+                        }
 
                         // Update zip with modified XML
                         zip.file('word/document.xml', modified);
@@ -991,7 +995,7 @@
                 })
                 .catch(e => {
                     console.error('DOCX template error:', e);
-                    alert('Error loading template. Make sure template.docx exists.');
+                    alert('Error: ' + e.message);
                 });
         }
     </script>
