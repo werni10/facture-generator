@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture Generator - HIBA ALAOUI SLIMANI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2docx/1.4.3/html2docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
 
@@ -934,26 +934,69 @@
         function downloadDOCX() {
             saveInvoice();
             const invoiceNumber = document.getElementById('invoiceNumber').value;
-            const htmlContent = document.getElementById('invoicePreview').innerHTML;
+            const location = document.getElementById('location').value;
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+            const companyName = document.getElementById('companyName').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const cin = document.getElementById('cin').value;
+            const patente = document.getElementById('patente').value;
+            const companyICE = document.getElementById('companyICE').value;
+            const client = document.getElementById('client').value;
+            const projet = document.getElementById('projet').value;
+            const ice = document.getElementById('ice').value;
+            const designation = document.getElementById('designation').value;
+            const totalAmount = document.getElementById('totalAmount').value;
+            const totalText = document.getElementById('totalText').value;
 
-            try {
-                html2docx.asBlob(htmlContent).then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                }).catch(e => {
-                    console.error('DOCX error:', e);
-                    alert('Error generating DOCX. Try downloading PDF instead.');
-                });
-            } catch(e) {
+            const xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <w:body>
+    <w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:t>${location} le ${day} ${month} ${year}</w:t></w:r></w:p>
+    <w:p><w:r><w:rPr><w:b/><w:sz w:val="32"/></w:rPr><w:t>${companyName}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>ADRESSE : ${address}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>TEL : ${phone}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>CIN : ${cin}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>PATENTE N : ${patente}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>ICE : ${companyICE}</w:t></w:r></w:p>
+    <w:p><w:r><w:t> </w:t></w:r></w:p>
+    <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="56"/></w:rPr><w:t>Facture ${invoiceNumber}</w:t></w:r></w:p>
+    <w:p><w:r><w:t> </w:t></w:r></w:p>
+    <w:p><w:r><w:t>Client           :               ${client}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>Projet           :               ${projet}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>ICE                  :                 ${ice}</w:t></w:r></w:p>
+    <w:p><w:r><w:t>Désignation     :                 ${designation}</w:t></w:r></w:p>
+    <w:p><w:r><w:t> </w:t></w:r></w:p>
+    <w:p><w:pPr><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>TOTAL : ${totalAmount} MAD</w:t></w:r></w:p>
+    <w:p><w:r><w:t>${totalText}</w:t></w:r></w:p>
+  </w:body>
+</w:document>`;
+
+            const zip = new JSZip();
+
+            // Add required files
+            zip.file('[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+
+            zip.folder('_rels').file('.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+
+            zip.folder('word').file('document.xml', xml);
+            zip.folder('word/_rels').file('document.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>');
+
+            zip.generateAsync({ type: 'blob' }).then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }).catch(e => {
                 console.error('DOCX error:', e);
-                alert('Error generating DOCX. Try downloading PDF instead.');
-            }
+                alert('Error generating DOCX: ' + e.message);
+            });
         }
     </script>
 </body>
