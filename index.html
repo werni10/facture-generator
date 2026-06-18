@@ -397,54 +397,57 @@
         #invoicePreview {
             width: 100%;
             background: white;
-            padding: 40px;
-            border: 2px solid #ffc0cb;
-            border-radius: 20px;
+            padding: 50px;
+            border: none;
+            border-radius: 0;
             font-family: 'Times New Roman', Times, serif;
             color: #000;
-            line-height: 1.4;
-            box-shadow: 0 10px 30px rgba(255, 192, 203, 0.2);
+            line-height: 1.3;
+            box-shadow: none;
+            font-size: 12px;
         }
 
         .company-header {
             text-align: left;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             padding-bottom: 0;
             border-bottom: none;
         }
 
         .company-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
 
         .company-info {
             font-size: 10px;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #000;
         }
 
         .date-location {
             text-align: right;
             font-size: 11px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             font-weight: bold;
+            letter-spacing: 0.3px;
         }
 
         .invoice-title {
             text-align: center;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
-            margin: 60px 0 60px 0;
-            letter-spacing: 2px;
+            margin: 80px 0 80px 0;
+            letter-spacing: 3px;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 80px;
+            gap: 16px;
+            margin-bottom: 120px;
             font-size: 11px;
         }
 
@@ -455,34 +458,38 @@
 
         .info-label {
             font-weight: bold;
-            min-width: 110px;
+            min-width: 120px;
             text-align: left;
+            letter-spacing: 0.3px;
         }
 
         .info-value {
             flex: 1;
-            padding-left: 20px;
+            padding-left: 30px;
+            letter-spacing: 0.3px;
         }
 
         .total-section {
             text-align: right;
-            margin-top: 60px;
+            margin-top: 100px;
             padding-top: 0;
             border-top: none;
         }
 
         .total-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
         }
 
         .total-text {
             font-size: 10px;
             color: #000;
             text-align: left;
-            margin-top: 30px;
-            line-height: 1.5;
+            margin-top: 40px;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
         }
 
         @keyframes slideDown {
