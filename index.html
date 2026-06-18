@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture Generator - HIBA ALAOUI SLIMANI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
 
@@ -474,12 +475,13 @@
             margin-top: 100px;
             padding-top: 0;
             border-top: none;
+            min-height: 100px;
         }
 
         .total-label {
             font-size: 11px;
             font-weight: bold;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             letter-spacing: 0.5px;
         }
 
@@ -487,9 +489,11 @@
             font-size: 10px;
             color: #000;
             text-align: left;
-            margin-top: 40px;
-            line-height: 1.6;
+            margin-top: 50px;
+            line-height: 1.8;
             letter-spacing: 0.3px;
+            word-wrap: break-word;
+            white-space: normal;
         }
 
         @keyframes slideDown {
@@ -658,6 +662,7 @@
                 </div>
 
                 <button onclick="downloadPDF()">⬇️ Download PDF</button>
+                <button onclick="downloadDOCX()" style="background: linear-gradient(135deg, #ff85c1 0%, #ffb0d5 100%); margin-top: 10px;">⬇️ Download DOCX</button>
 
                 <div class="section-title" style="margin-top: 25px;">History</div>
                 <div id="historyList"></div>
@@ -920,6 +925,122 @@
             };
 
             html2pdf().set(opt).from(element).save();
+        }
+
+        function downloadDOCX() {
+            saveInvoice();
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, convertInchesToTwip } = docx;
+
+            const companyName = document.getElementById('companyName').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const cin = document.getElementById('cin').value;
+            const patente = document.getElementById('patente').value;
+            const companyICE = document.getElementById('companyICE').value;
+            const location = document.getElementById('location').value;
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const client = document.getElementById('client').value;
+            const projet = document.getElementById('projet').value;
+            const ice = document.getElementById('ice').value;
+            const designation = document.getElementById('designation').value;
+            const totalAmount = document.getElementById('totalAmount').value;
+            const totalText = document.getElementById('totalText').value;
+
+            const sections = [{
+                children: [
+                    new Paragraph({
+                        text: `${location} le ${day} ${month} ${year}`,
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: companyName,
+                        bold: true,
+                        size: 22,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `ADRESSE : ${address}`,
+                        size: 20,
+                        spacing: { after: 80 }
+                    }),
+                    new Paragraph({
+                        text: `TEL : ${phone}`,
+                        size: 20,
+                        spacing: { after: 80 }
+                    }),
+                    new Paragraph({
+                        text: `CIN : ${cin}`,
+                        size: 20,
+                        spacing: { after: 80 }
+                    }),
+                    new Paragraph({
+                        text: `PATENTE N : ${patente}`,
+                        size: 20,
+                        spacing: { after: 80 }
+                    }),
+                    new Paragraph({
+                        text: `ICE : ${companyICE}`,
+                        size: 20,
+                        spacing: { after: 600 }
+                    }),
+                    new Paragraph({
+                        text: `Facture ${invoiceNumber}`,
+                        alignment: AlignmentType.CENTER,
+                        bold: true,
+                        size: 56,
+                        spacing: { before: 400, after: 400 }
+                    }),
+                    new Paragraph({
+                        text: `Client           :               ${client}`,
+                        size: 22,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `Projet           :               ${projet}`,
+                        size: 22,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `ICE                  :                 ${ice}`,
+                        size: 22,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `Désignation     :                 ${designation}`,
+                        size: 22,
+                        spacing: { after: 800 }
+                    }),
+                    new Paragraph({
+                        text: `TOTAL : ${totalAmount} MAD`,
+                        alignment: AlignmentType.RIGHT,
+                        bold: true,
+                        size: 22,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: totalText,
+                        size: 20,
+                        spacing: { after: 200 }
+                    })
+                ]
+            }];
+
+            const doc = new Document({ sections });
+
+            Packer.toBlob(doc).then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `facture_${invoiceNumber.replace('/', '_')}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            });
         }
     </script>
 </body>
